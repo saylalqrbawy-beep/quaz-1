@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>اختبار الذكاءات المتعددة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;600;700&family=Tajawal:wght@400;500;700&display=swap">
+<style>
+  /* Layout: single RTL column, sticky progress bar, eight colour-coded sections, results revealed below the form */
+  :root {
+    --bg: #f4f7f6;
+    --surface: #ffffff;
+    --ink: #17262d;
+    --muted: #55676f;
+    --line: #d6e0e2;
+    --accent: #17636d;
+    --on-accent: #ffffff;
+    --good: #1c7d45;
+    --mid: #a96a00;
+    --low: #bb3a2d;
+    --on-c: #ffffff;
+    --c1: #1f6fa5;
+    --c2: #8f6a00;
+    --c3: #c9473a;
+    --c4: #8a47a8;
+    --c5: #12806a;
+    --c6: #4a7f1f;
+    --c7: #b8540a;
+    --c8: #4a5fc1;
+    --font-display: "Reem Kufi", "Tajawal", "Segoe UI", Tahoma, sans-serif;
+    --font-body: "Tajawal", "Segoe UI", Tahoma, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1a1f;
+      --surface: #16252c;
+      --ink: #e7eff1;
+      --muted: #9db0b7;
+      --line: #2b3f48;
+      --accent: #5cc0cc;
+      --on-accent: #0b1a1e;
+      --good: #5cc98a;
+      --mid: #e3a93c;
+      --low: #f08a7d;
+      --on-c: #0f1a1f;
+      --c1: #6db6e8;
+      --c2: #e0b73a;
+      --c3: #ee8478;
+      --c4: #c08be0;
+      --c5: #4fc1a6;
+      --c6: #9acd62;
+      --c7: #f09a55;
+      --c8: #98a7ee;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1a1f;
+    --surface: #16252c;
+    --ink: #e7eff1;
+    --muted: #9db0b7;
+    --line: #2b3f48;
+    --accent: #5cc0cc;
+    --on-accent: #0b1a1e;
+    --good: #5cc98a;
+    --mid: #e3a93c;
+    --low: #f08a7d;
+    --on-c: #0f1a1f;
+    --c1: #6db6e8;
+    --c2: #e0b73a;
+    --c3: #ee8478;
+    --c4: #c08be0;
+    --c5: #4fc1a6;
+    --c6: #9acd62;
+    --c7: #f09a55;
+    --c8: #98a7ee;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { color-scheme: light; }
+  body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 0 56px;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    background: var(--bg);
+    z-index: 30;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.35; }
+  p { margin: 0; }
+
+  /* Header */
+  .masthead { padding-block: 40px 28px; display: grid; gap: 14px; }
+  .masthead h1 { font-size: clamp(2rem, 7vw, 3.1rem); font-weight: 700; letter-spacing: 0; }
+  .masthead .sub { color: var(--muted); font-size: 1.1rem; }
+  .eight { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .eight span {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 12px 4px 14px; border: 1px solid var(--line); border-radius: 999px;
+    background: var(--surface); font-size: 0.92rem; font-weight: 500;
+  }
+  .eight i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); display: block; }
+
+  /* Sticky progress */
+  .progress {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+    background: var(--bg); padding-block: 10px; margin-inline: -4px; padding-inline: 4px;
+    display: grid; gap: 6px;
+  }
+  .progress-row { display: flex; justify-content: space-between; gap: 12px; font-size: 0.9rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .meter { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  .meter b { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 99px; transition: width .25s ease; }
+
+  /* Student data */
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .student { padding: 20px; margin-top: 12px; }
+  .student h2 { font-size: 1.15rem; margin-bottom: 14px; }
+  .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .field { display: grid; gap: 4px; min-width: 0; }
+  .field label { font-weight: 500; font-size: 0.92rem; color: var(--muted); }
+  .field input {
+    font: inherit; color: var(--ink); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 6px; padding: 9px 12px; width: 100%; min-width: 0;
+  }
+  .field input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  /* Instructions */
+  .howto { margin-top: 28px; display: grid; gap: 12px; }
+  .howto h2 { font-size: 1.35rem; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+  .scale { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .scale div { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.92rem; display: flex; gap: 8px; align-items: baseline; }
+  .scale b { font-family: var(--font-display); font-size: 1.2rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+  /* Sections */
+  .section { margin-top: 24px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+  .section-head {
+    display: flex; align-items: center; gap: 12px; padding: 12px 18px;
+    background: var(--c); color: var(--on-c);
+  }
+  .section-head .num {
+    font-family: var(--font-display); font-weight: 700; font-size: 1.25rem;
+    width: 34px; height: 34px; border-radius: 50%; border: 2px solid currentColor;
+    display: grid; place-items: center; flex: none; font-variant-numeric: tabular-nums;
+  }
+  .section-head h3 { font-size: 1.15rem; font-weight: 600; }
+  .q {
+    padding: 14px 18px; display: grid; gap: 10px;
+    border-top: 1px solid var(--line);
+    background: color-mix(in srgb, var(--c) 6%, var(--surface));
+  }
+  .q:first-of-type { border-top: 0; }
+  .q.missing { box-shadow: inset -4px 0 0 var(--low); background: color-mix(in srgb, var(--low) 10%, var(--surface)); }
+  .q p { font-weight: 500; }
+  .opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .opt { position: relative; display: block; min-width: 0; }
+  .opt input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .opt span {
+    display: flex; justify-content: center; align-items: baseline; gap: 6px; text-align: center;
+    padding: 7px 6px; border: 1.5px solid var(--line); border-radius: 8px;
+    background: var(--surface); font-size: 0.92rem; line-height: 1.4; transition: background .15s, border-color .15s;
+  }
+  .opt span b { font-family: var(--font-display); font-variant-numeric: tabular-nums; }
+  .opt:hover span { border-color: var(--c); }
+  .opt input:checked + span { background: var(--c); border-color: var(--c); color: var(--on-c); font-weight: 700; }
+  .opt input:focus-visible + span { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .total {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 10px 18px; border-top: 1px solid var(--line); background: var(--surface); font-weight: 500;
+  }
+  .total output { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--c); font-variant-numeric: tabular-nums; }
+
+  /* Submit */
+  .submit-area { margin-top: 28px; display: grid; gap: 10px; justify-items: start; }
+  button.primary, button.ghost {
+    font: inherit; font-weight: 700; border-radius: 8px; padding: 12px 28px; cursor: pointer;
+  }
+  button.primary { background: var(--accent); color: var(--on-accent); border: 0; }
+  button.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .msg { color: var(--low); font-weight: 500; min-height: 1.5em; }
+
+  /* Results */
+  #results { margin-top: 44px; display: grid; gap: 28px; scroll-margin-top: 80px; }
+  #results[hidden] { display: none !important; }
+  .res-head { padding-bottom: 10px; border-bottom: 2px solid var(--accent); display: grid; gap: 4px; }
+  .res-head h2 { font-size: 1.7rem; }
+  .res-head p { color: var(--muted); }
+  .bars { padding: 20px; display: grid; gap: 14px; }
+  .bar-row { display: grid; grid-template-columns: 96px minmax(0, 1fr) 64px; gap: 12px; align-items: center; }
+  .bar-row .name { font-weight: 500; }
+  .track { position: relative; height: 16px; border-radius: 99px; background: color-mix(in srgb, var(--c) 14%, var(--surface)); overflow: hidden; }
+  .track b { position: absolute; inset-block: 0; inset-inline-start: 0; width: 0; background: var(--c); border-radius: 99px; transition: width .6s ease; }
+  .bar-row .val { font-variant-numeric: tabular-nums; font-weight: 700; text-align: end; }
+  .bar-row .val small { font-weight: 400; color: var(--muted); }
+  .axis { display: grid; grid-template-columns: 96px minmax(0, 1fr) 64px; gap: 12px; font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .axis div { display: flex; justify-content: space-between; }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 440px; }
+  th, td { padding: 10px 14px; text-align: right; border-bottom: 1px solid var(--line); }
+  th { background: var(--ink); color: var(--bg); font-family: var(--font-display); font-weight: 600; }
+  td.score { font-variant-numeric: tabular-nums; font-weight: 700; }
+  .tag { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+  .tag::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
+  .tag.good { color: var(--good); } .tag.mid { color: var(--mid); } .tag.low { color: var(--low); }
+  .name-cell { display: inline-flex; align-items: center; gap: 10px; }
+  .name-cell i { width: 10px; height: 10px; border-radius: 3px; background: var(--c); display: block; }
+
+  .strong { padding: 20px; display: grid; gap: 16px; }
+  .strong h3 { font-size: 1.25rem; }
+  .strong-list { display: grid; gap: 12px; }
+  .strong-item { border-inline-start: 5px solid var(--c); padding: 4px 14px; display: grid; gap: 2px; }
+  .strong-item b { font-weight: 700; }
+  .strong-item span { color: var(--muted); }
+
+  .key { display: grid; gap: 10px; }
+  .key h3 { font-size: 1.25rem; }
+  .key div { border-radius: 8px; padding: 10px 16px; border: 1px solid var(--line); background: var(--surface); border-inline-start: 6px solid currentColor; }
+  .key div.good { color: var(--good); } .key div.mid { color: var(--mid); } .key div.low { color: var(--low); }
+  .key div b { display: block; }
+  .key div span { color: var(--ink); }
+
+  .note { padding: 16px 20px; border-radius: 8px; background: color-mix(in srgb, var(--accent) 10%, var(--surface)); border-inline-start: 5px solid var(--accent); }
+  .note b { display: block; margin-bottom: 2px; }
+  .closing { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+
+  @media (max-width: 520px) {
+    .fields { grid-template-columns: 1fr; }
+    .scale { grid-template-columns: 1fr; }
+    .bar-row, .axis { grid-template-columns: 78px minmax(0, 1fr) 52px; gap: 8px; }
+    .opt span { flex-direction: column; align-items: center; gap: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .meter b, .track b, .opt span { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap" dir="rtl" lang="ar">
+  <header class="masthead">
+    <h1>اختبار الذكاءات المتعددة</h1>
+    <p class="sub">المستند إلى نظرية هاوارد جاردنر</p>
+    <div class="eight" id="eight" aria-label="أنواع الذكاء الثمانية"></div>
+  </header>
+
+  <div class="progress" aria-live="polite">
+    <div class="progress-row"><span id="progText">أجبت عن 0 من 40</span><span id="progPct">0%</span></div>
+    <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="40" aria-valuenow="0" id="meter"><b id="meterFill"></b></div>
+  </div>
+
+  <form id="quiz" novalidate>
+    <section class="card student" aria-labelledby="stuTitle">
+      <h2 id="stuTitle">بيانات الطالب</h2>
+      <div class="fields">
+        <div class="field"><label for="f-name">الاسم الكامل</label><input id="f-name" type="text" autocomplete="name"></div>
+        <div class="field"><label for="f-school">المدرسة</label><input id="f-school" type="text"></div>
+        <div class="field"><label for="f-class">الصف / الشعبة</label><input id="f-class" type="text"></div>
+        <div class="field"><label for="f-date">التاريخ</label><input id="f-date" type="date"></div>
+      </div>
+    </section>
+
+    <section class="howto">
+      <h2>تعليمات المقياس</h2>
+      <p>يهدف هذا المقياس إلى مساعدة الطالب والمعلم وولي الأمر على اكتشاف نقاط القوة والمواهب الكامنة وتحديد مجالات التميز التي يمكن تطويرها. اقرأ العبارات التالية بعناية، ثم اختر الخيار الذي يعبر عنك بصدق.</p>
+      <div class="scale">
+        <div><b>0</b> لا تنطبق عليّ أبداً</div>
+        <div><b>1</b> تنطبق عليّ أحياناً</div>
+        <div><b>2</b> تنطبق عليّ دائماً</div>
+      </div>
+    </section>
+
+    <div id="sections"></div>
+
+    <div class="submit-area">
+      <p>نهاية الأسئلة. اضغط الزر لحساب النتائج.</p>
+      <button type="submit" class="primary" id="submitBtn">اعرض النتائج</button>
+      <p class="msg" id="msg" role="alert"></p>
+    </div>
+  </form>
+
+  <section id="results" hidden aria-labelledby="resTitle"></section>
+</div>
+
+<script>
+(function () {
+  var SECTIONS = [
+    { name: "الذكاء اللغوي", short: "اللغوي", tip: "اقرأ كتباً جديدة، اكتب مذكرات يومية، تعلم كلمات جديدة يومياً.", qs: [
+      "أستمتع بالقراءة وأقضي وقتاً طويلاً في مطالعة الكتب والمقالات",
+      "أجيد التعبير عن أفكاري بالكلمات المكتوبة والمنطوقة",
+      "أتذكر الأشعار والأقوال المأثورة والعبارات الأدبية بسهولة",
+      "أحب الألعاب اللغوية كالكلمات المتقاطعة والأحجيات الأدبية",
+      "أتعلم اللغات الأجنبية بسرعة وسهولة أكثر من غيري"] },
+    { name: "الذكاء المنطقي-الرياضي", short: "المنطقي", tip: "العب الشطرنج، حل الألغاز، اجرِ تجارب علمية بسيطة.", qs: [
+      "أستمتع بحل المسائل الرياضية والألغاز المنطقية المعقدة",
+      "أفكر بطريقة منهجية ومنطقية خطوة بخطوة عند مواجهة المشكلات",
+      "أحب إجراء التجارب العلمية واكتشاف العلاقات بين الأسباب والنتائج",
+      "أجيد التعامل مع الحاسوب والبرمجة والتفكير الحسابي",
+      "أستمتع بالأرقام والإحصاءات وتحليل البيانات"] },
+    { name: "الذكاء المكاني/البصري", short: "المكاني", tip: "ارسم خرائط ذهنية، صمم ملصقات، ركب المكعبات والألغاز.", qs: [
+      "أتخيل الأشكال والأشياء بوضوح في ذهني وأعيد ترتيبها",
+      "أستمتع بالرسم وتصميم الخرائط والمخططات البيانية",
+      "أتمكن من تجميع قطع الألغاز وفك الأشكال المعقدة بسهولة",
+      "أجيد قراءة الخرائط والاهتداء بالاتجاهات في الأماكن الجديدة",
+      "أهتم بالألوان والتصاميم والفنون البصرية والديكور"] },
+    { name: "الذكاء الموسيقي", short: "الموسيقي", tip: "استمع لأنواع موسيقى مختلفة، تعلم العزف، ألف ألحاناً بسيطة.", qs: [
+      "أتذكر الألحان والأغاني بسرعة بعد سماعها مرة أو مرتين فقط",
+      "أميز بين الأصوات الموسيقية المختلفة وأنواع الآلات الموسيقية",
+      "أستمتع بالعزف على آلة موسيقية أو الغناء أو قرع الإيقاع",
+      "تؤثر الموسيقى في مزاجي وأحاسيسي تأثيراً عميقاً وواضحاً",
+      "أحافظ على الإيقاع والنغمة بدقة عند الغناء أو اللعب"] },
+    { name: "الذكاء الجسدي-الحركي", short: "الحركي", tip: "مارس الرياضة، تعلم الحرف اليدوية، مثل أدواراً مسرحية.", qs: [
+      "أستمتع بالرياضة والأنشطة الجسدية وأبدع فيها",
+      "أتعلم المهارات الحركية الجديدة بسرعة بالتجربة والممارسة",
+      "أعبر عن أفكاري ومشاعري بحركات يدي وجسدي أثناء الحديث",
+      "أجيد الأعمال اليدوية والحرفية كالنجارة أو الطرز أو النحت",
+      "أجد صعوبة في البقاء جالساً لفترة طويلة دون حركة أو نشاط"] },
+    { name: "الذكاء الطبيعي/البيئي", short: "الطبيعي", tip: "ازرع نباتاً، راقب الطيور، صنف مجموعة من الصخور أو الأوراق.", qs: [
+      "أستمتع بقضاء الوقت في الطبيعة والهواء الطلق والتجوال في البيئة",
+      "أميز بين أنواع النباتات والحيوانات والطيور والحشرات بسهولة",
+      "أهتم بقضايا البيئة وحماية الطبيعة ومكافحة التلوث",
+      "أتأثر بتغيرات الطقس والفصول والظواهر الطبيعية حولي",
+      "أحب الاعتناء بالنباتات المنزلية أو تربية الحيوانات الأليفة"] },
+    { name: "الذكاء الاجتماعي/التفاعلي", short: "الاجتماعي", tip: "شارك في أعمال تطوعية، قد مجموعة، استمع جيداً للآخرين.", qs: [
+      "أستمتع بالعمل ضمن فريق أو مجموعة أكثر من العمل منفرداً",
+      "أفهم مشاعر الآخرين وأتعاطف معهم بشكل تلقائي وعميق",
+      "أجيد حل النزاعات والتوسط بين الناس لتحقيق التوافق",
+      "يلجأ إليّ أصدقائي وزملائي طلباً للمشورة والدعم النفسي",
+      "أتكيف بسهولة في البيئات الاجتماعية المختلفة وأكسب الأصدقاء"] },
+    { name: "الذكاء الذاتي/الانعكاسي", short: "الذاتي", tip: "خصص وقتاً للتأمل، حدد أهدافك الشخصية، فكر في مشاعرك.", qs: [
+      "أفضل العمل بمفردي على العمل ضمن مجموعة في أحيان كثيرة",
+      "أفهم مشاعري الداخلية وأسباب تصرفاتي ودوافعي فهماً عميقاً",
+      "أضع أهدافاً شخصية واضحة وأضع خططاً لتحقيقها",
+      "أحتاج إلى وقت كافٍ للتفكير والتأمل قبل اتخاذ أي قرار مهم",
+      "أحتفظ بمذكرات شخصية أو يوميات أسجل فيها أفكاري ومشاعري"] }
+  ];
+  var OPTS = [["0", "أبداً"], ["1", "أحياناً"], ["2", "دائماً"]];
+  var TOTAL = SECTIONS.length * 5;
+
+  function el(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  // Legend chips
+  el("eight").innerHTML = SECTIONS.map(function (s, i) {
+    return '<span style="--c:var(--c' + (i + 1) + ')"><i></i>' + s.short + "</span>";
+  }).join("");
+
+  // Sections
+  el("sections").innerHTML = SECTIONS.map(function (s, i) {
+    var n = i + 1;
+    var qs = s.qs.map(function (q, j) {
+      var name = "q-" + n + "-" + (j + 1);
+      var opts = OPTS.map(function (o) {
+        return '<label class="opt"><input type="radio" id="' + name + "-" + o[0] + '" name="' + name + '" value="' + o[0] + '"><span><b>' + o[0] + "</b> " + o[1] + "</span></label>";
+      }).join("");
+      return '<div class="q" id="row-' + name + '" role="radiogroup" aria-labelledby="lbl-' + name + '"><p id="lbl-' + name + '">' + (j + 1) + ". " + esc(q) + '</p><div class="opts">' + opts + "</div></div>";
+    }).join("");
+    return '<section class="section" style="--c:var(--c' + n + ')" aria-labelledby="sh-' + n + '">' +
+      '<div class="section-head"><span class="num">' + n + '</span><h3 id="sh-' + n + '">' + s.name + "</h3></div>" + qs +
+      '<div class="total"><span>المجموع الكلي (من 10)</span><output id="tot-' + n + '">0</output></div></section>';
+  }).join("");
+
+  function scoreOf(n) {
+    var sum = 0, answered = 0;
+    for (var j = 1; j <= 5; j++) {
+      var c = document.querySelector('input[name="q-' + n + "-" + j + '"]:checked');
+      if (c) { sum += Number(c.value); answered++; }
+    }
+    return { sum: sum, answered: answered };
+  }
+
+  function refresh() {
+    var done = 0;
+    for (var n = 1; n <= SECTIONS.length; n++) {
+      var r = scoreOf(n);
+      done += r.answered;
+      el("tot-" + n).textContent = r.sum;
+    }
+    var pct = Math.round(done / TOTAL * 100);
+    el("progText").textContent = "أجبت عن " + done + " من " + TOTAL;
+    el("progPct").textContent = pct + "%";
+    el("meterFill").style.width = pct + "%";
+    el("meter").setAttribute("aria-valuenow", done);
+  }
+
+  el("quiz").addEventListener("change", function (e) {
+    if (e.target && e.target.type === "radio") {
+      var row = el("row-" + e.target.name);
+      if (row) row.classList.remove("missing");
+      el("msg").textContent = "";
+    }
+    refresh();
+  });
+
+  function level(v) {
+    if (v >= 8) return { cls: "good", label: "مرتفع ومتميز" };
+    if (v >= 5) return { cls: "mid", label: "متوسط" };
+    return { cls: "low", label: "منخفض حالياً" };
+  }
+
+  function render(scores) {
+    var name = el("f-name").value.trim();
+    var school = el("f-school").value.trim();
+    var klass = el("f-class").value.trim();
+    var date = el("f-date").value;
+    var meta = [school, klass, date].filter(Boolean).map(esc).join(" · ");
+
+    var bars = scores.map(function (v, i) {
+      return '<div class="bar-row" style="--c:var(--c' + (i + 1) + ')"><span class="name">' + SECTIONS[i].short + '</span><div class="track"><b data-w="' + v * 10 + '"></b></div><span class="val">' + v + ' <small>/ 10</small></span></div>';
+    }).join("");
+
+    var rows = scores.map(function (v, i) {
+      var L = level(v);
+      return '<tr style="--c:var(--c' + (i + 1) + ')"><td><span class="name-cell"><i></i>' + SECTIONS[i].name + '</span></td><td class="score">' + v + '</td><td><span class="tag ' + L.cls + '">' + L.label + "</span></td></tr>";
+    }).join("");
+
+    var order = scores.map(function (v, i) { return { v: v, i: i }; }).sort(function (a, b) { return b.v - a.v || a.i - b.i; }).slice(0, 3);
+    var strong = order.map(function (o) {
+      return '<div class="strong-item" style="--c:var(--c' + (o.i + 1) + ')"><b>' + SECTIONS[o.i].name + " (" + o.v + " من 10)</b><span>" + SECTIONS[o.i].tip + "</span></div>";
+    }).join("");
+
+    el("results").innerHTML =
+      '<div class="res-head"><h2 id="resTitle">' + (name ? "نتائج " + esc(name) : "بروفايل ذكاء الطالب") + "</h2>" + (meta ? "<p>" + meta + "</p>" : "") + "</div>" +
+      '<div class="card bars">' + bars +
+        '<div class="axis"><span></span><div><span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span></div><span></span></div></div>' +
+      '<div class="card table-wrap"><table><thead><tr><th>نوع الذكاء</th><th>الدرجة (من 10)</th><th>التصنيف</th></tr></thead><tbody>' + rows + "</tbody></table></div>" +
+      '<div class="card strong"><h3>نقاط قوتي (الذكاءات الأعلى)</h3><div class="strong-list">' + strong + "</div></div>" +
+      '<div class="key"><h3>تفسير الدرجات</h3>' +
+        '<div class="good"><b>8 - 10 درجات: ذكاء مرتفع ومتميز</b><span>هذا النوع يمثل نقطة قوة حقيقية لديك. يمكنك الاعتماد عليه في التعلم والعمل واختيار الهوايات.</span></div>' +
+        '<div class="mid"><b>5 - 7 درجات: ذكاء متوسط</b><span>لديك قدرات جيدة في هذا الجانب، ويمكن تطويرها وتحسينها بالممارسة والتدريب المستمر.</span></div>' +
+        '<div class="low"><b>0 - 4 درجات: ذكاء منخفض حالياً</b><span>هذا المجال يحتاج إلى مزيد من الاهتمام. تذكر أن الذكاء قابل للنمو والتطور وليس ثابتاً!</span></div></div>' +
+      '<div class="note"><b>ملاحظة هامة</b>نظرية الذكاءات المتعددة تؤكد أن كل إنسان يمتلك جميع أنواع الذكاء الثمانية، ولكن بنسب متفاوتة تجعله فريداً ومميزاً. لا يوجد ذكاء "أفضل" من الآخر، فالمجتمع يحتاج إلى الشاعر والمهندس والرياضي والموسيقي والطبيب والمزارع والقائد والمفكر.</div>' +
+      '<p class="closing">أنت ذكي بطريقتك الخاصة!</p>' +
+      '<div><button type="button" class="ghost" id="retake">إعادة الاختبار</button></div>';
+
+    el("results").hidden = false;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        Array.prototype.forEach.call(document.querySelectorAll(".track b"), function (b) { b.style.width = b.getAttribute("data-w") + "%"; });
+      });
+    });
+    el("results").scrollIntoView({ behavior: "smooth", block: "start" });
+    el("retake").addEventListener("click", function () {
+      el("quiz").reset();
+      el("results").hidden = true;
+      el("results").innerHTML = "";
+      refresh();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  el("quiz").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var firstMissing = null, missing = 0;
+    for (var n = 1; n <= SECTIONS.length; n++) {
+      for (var j = 1; j <= 5; j++) {
+        var name = "q-" + n + "-" + j;
+        var row = el("row-" + name);
+        if (!document.querySelector('input[name="' + name + '"]:checked')) {
+          row.classList.add("missing");
+          missing++;
+          if (!firstMissing) firstMissing = row;
+        }
+      }
+    }
+    if (missing) {
+      el("msg").textContent = "بقي " + missing + (missing === 1 ? " سؤال" : missing === 2 ? " سؤالان" : missing <= 10 ? " أسئلة" : " سؤالاً") + " بلا إجابة. أجب عنها لعرض النتائج.";
+      firstMissing.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    var scores = [];
+    for (var k = 1; k <= SECTIONS.length; k++) scores.push(scoreOf(k).sum);
+    render(scores);
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>
