@@ -281,10 +281,11 @@
       <div class="card student">
         <h2 id="stuTitle">بياناتك الشخصية</h2>
         <p class="lead">اكتب بياناتك أولاً، ثم ابدأ الاختبار.</p>
-        <div class="fields three">
+        <div class="fields">
           <div class="field"><label for="f-name">الاسم الكامل</label><input id="f-name" type="text" autocomplete="name" required></div>
           <div class="field"><label for="f-birth">تاريخ الميلاد</label><input id="f-birth" type="date" autocomplete="bday" required></div>
           <div class="field"><label for="f-school">المدرسة</label><input id="f-school" type="text" required></div>
+          <div class="field"><label for="f-date">التاريخ</label><input id="f-date" type="date" required></div>
         </div>
         <p class="msg" id="infoMsg" role="alert"></p>
         <div class="btn-row"><button type="submit" class="primary">ابدأ الاختبار</button></div>
@@ -444,7 +445,7 @@
     var school = el("f-school").value.trim();
     var birth = el("f-birth").value;
     var age = ageOf(birth);
-    var meta = [school, "تاريخ الميلاد " + fmtDate(birth) + (age !== null ? " (" + age + " سنة)" : "")].map(esc).join(" · ");
+    var meta = [school, "تاريخ الميلاد " + fmtDate(birth) + (age !== null ? " (" + age + " سنة)" : ""), "تاريخ الاختبار " + fmtDate(el("f-date").value)].map(esc).join(" · ");
 
     var bars = scores.map(function (v, i) {
       return '<div class="bar-row" style="--c:var(--c' + (i + 1) + ')"><span class="name">' + SECTIONS[i].short + '</span><div class="track"><b data-w="' + v * 10 + '"></b></div><span class="val">' + v + ' <small>/ 10</small></span></div>';
@@ -547,9 +548,10 @@
     var d = new Date();
     var iso = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
     el("f-birth").max = iso;
+    el("f-date").value = iso;
   })();
 
-  ["f-name", "f-birth", "f-school"].forEach(function (id) {
+  ["f-name", "f-birth", "f-school", "f-date"].forEach(function (id) {
     el(id).addEventListener("input", function () { el(id).classList.remove("bad"); el("infoMsg").textContent = ""; });
   });
 
@@ -562,9 +564,10 @@
     if (name.length < 2) bad.push("f-name");
     if (!birth || ageOf(birth) === null) bad.push("f-birth");
     if (school.length < 2) bad.push("f-school");
-    ["f-name", "f-birth", "f-school"].forEach(function (id) { el(id).classList.toggle("bad", bad.indexOf(id) !== -1); });
+    if (!el("f-date").value) bad.push("f-date");
+    ["f-name", "f-birth", "f-school", "f-date"].forEach(function (id) { el(id).classList.toggle("bad", bad.indexOf(id) !== -1); });
     if (bad.length) {
-      el("infoMsg").textContent = "أكمل الحقول المطلوبة: الاسم الكامل، وتاريخ ميلاد صحيح، واسم المدرسة.";
+      el("infoMsg").textContent = "أكمل الحقول المطلوبة: الاسم الكامل، وتاريخ ميلاد صحيح، واسم المدرسة، والتاريخ.";
       el(bad[0]).focus();
       return;
     }
