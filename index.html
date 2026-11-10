@@ -249,6 +249,8 @@
   .fields.three { grid-template-columns: 1fr; }
   .field input.bad { border-color: var(--low); }
   .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .intro { margin: 0 0 20px; }
+  .intro img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); }
   .hello { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; margin-bottom: 4px; }
 
   @media (max-width: 520px) {
@@ -295,6 +297,9 @@
 
   <div class="step" id="step2" hidden>
     <p class="hello" id="hello"></p>
+    <figure class="intro">
+      <img src="intro.jpg" width="1376" height="768" alt="مقدمة عن الموهبة: الموهبة قدرة مميزة يمتلكها الفرد تجعله يتفوق أو يبدع في مجال معين، وتظهر من خلال قدراته واستعداداته التي يمكن تنميتها بالتعلم والتدريب والتشجيع. كل طفل يمتلك موهبة تستحق الاكتشاف والرعاية والإبداع.">
+    </figure>
     <div class="progress" aria-live="polite">
       <div class="progress-row"><span id="progText">أجبت عن 0 من 40</span><span id="progPct">0%</span></div>
       <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="40" aria-valuenow="0" id="meter"><b id="meterFill"></b></div>
